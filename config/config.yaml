@@ -1,0 +1,61 @@
+# 视频编辑效果批量评判配置文件
+
+# LM Studio API 配置
+model:
+  # LM Studio 服务地址
+  api_url: "http://localhost:1234/v1/chat/completions"
+  # 模型名称（以LM Studio中显示的名称为准）
+  model_name: "qwen/qwen3-vl-30b"
+  # 温度参数（判断任务建议0.1-0.3）
+  temperature: 0.2
+  # 最大token数
+  max_tokens: 12000
+  # 请求超时时间（秒）
+  timeout: 60
+
+# 视频处理配置
+video:
+  # 输入视频目录
+  input_dir: "E:/Work_lyl/concat_disagree/part_0"
+  # 输出目录
+  output_dir: "E:/Work_lyl/output"
+  # 视频文件扩展名
+  video_extensions: [".mp4", ".avi", ".mov", ".mkv"]
+  # 抽帧位置：middle表示中间时间点，也可以指定具体秒数
+  frame_position: "middle"
+  # 抽帧数量：1表示只抽一帧，3表示抽首中尾三帧
+  frame_count: 3
+
+# 图像处理配置
+image:
+  # 交换位置的方式：physical（物理交换图像）或 prompt（仅在prompt中交换称呼）
+  swap_method: "physical"
+  # 图像质量（JPEG压缩质量）
+  jpeg_quality: 95
+
+# 判断配置
+judgment:
+  # 置信度判断方式：consistency（两次判断一致性）
+  confidence_method: "consistency"
+  # 结果解析的正则表达式
+  result_pattern: "结论：(edit_1|edit_2|平局)"
+
+# 输出目录结构配置
+output_dirs:
+  # 高置信度分类目录
+  edit1: "edit1"
+  edit2: "edit2"
+  draw: "平局"
+  # 低置信度目录
+  manual_review: "_待人工复核"
+  # 日志目录
+  logs: "_判断日志"
+
+# 日志配置
+logging:
+  # 日志级别
+  level: "INFO"
+  # 日志文件
+  log_file: "video_judgment.log"
+  # 结果CSV文件
+  results_csv: "results.csv"
