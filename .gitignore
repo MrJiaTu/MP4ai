@@ -10,3 +10,9 @@ __pycache__/
 venv/
 *.env
 .idea/
+
+
+# 日志和运行结果
+*.log
+*_judgment.json
+
