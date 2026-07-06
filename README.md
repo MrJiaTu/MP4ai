@@ -1,155 +1,155 @@
-# 视频编辑效果批量评判程序
+# Video Editing Effect Batch Evaluation Tool
 
-基于VLM模型的视频编辑效果批量评判工具，用于自动分类视频编辑结果。
+A batch evaluation tool for video editing effects based on VLM models, used to automatically classify video editing results.
 
-## 功能特性
+## Features
 
-- **自动抽帧**：从视频中抽取代表性帧进行分析
-- **VLM判断**：使用本地VLM模型（通过LM Studio）进行编辑效果评判
-- **一致性检查**：通过位置交换进行两次判断，确保结果一致性
-- **自动分类**：根据判断结果自动归档到对应目录
-- **详细日志**：记录完整的判断过程和结果
+- **Automatic Frame Extraction**: Extract representative frames from videos for analysis
+- **VLM Judgment**: Use local VLM models (via LM Studio) for editing effect evaluation
+- **Consistency Check**: Perform two judgments with position swapping to ensure result consistency
+- **Automatic Classification**: Automatically archive results to corresponding directories based on judgment
+- **Detailed Logging**: Record complete judgment process and results
 
-## 项目结构
+## Project Structure
 
 ```
 MP4AI/
 ├── config/
-│   └── config.yaml          # 配置文件
+│   └── config.yaml          # Configuration file
 ├── src/
 │   ├── __init__.py
-│   ├── config.py            # 配置管理
-│   ├── video_processor.py   # 视频处理
-│   ├── image_processor.py   # 图像处理
-│   ├── vlm_judge.py        # VLM判断
-│   ├── result_classifier.py # 结果分类
-│   ├── logger.py           # 日志记录
-│   └── main.py             # 主程序
-├── test_program.py          # 测试脚本
-├── requirements.txt         # Python依赖
-└── README.md               # 本文件
+│   ├── config.py            # Configuration management
+│   ├── video_processor.py   # Video processing
+│   ├── image_processor.py   # Image processing
+│   ├── vlm_judge.py        # VLM judgment
+│   ├── result_classifier.py # Result classification
+│   ├── logger.py           # Logging
+│   └── main.py             # Main program
+├── test_program.py          # Test script
+├── requirements.txt         # Python dependencies
+└── README.md               # This file
 ```
 
-## 安装与配置
+## Installation & Configuration
 
-### 1. 安装Python依赖
+### 1. Install Python Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. 配置LM Studio
+### 2. Configure LM Studio
 
-1. 下载并安装 [LM Studio](https://lmstudio.ai/)
-2. 下载支持的VLM模型（推荐 `qwen3-vl-30b`）
-3. 在LM Studio中加载模型并启动本地服务（默认端口1234）
+1. Download and install [LM Studio](https://lmstudio.ai/)
+2. Download a supported VLM model (recommended: `qwen3-vl-30b`)
+3. Load the model in LM Studio and start the local server (default port: 1234)
 
-### 3. 修改配置文件
+### 3. Modify Configuration File
 
-编辑 `config/config.yaml`：
+Edit `config/config.yaml`:
 
 ```yaml
-# 模型配置
+# Model configuration
 model:
   api_url: "http://localhost:1234/v1/chat/completions"
-  model_name: "qwen/qwen3-vl-30b"  # 根据LM Studio中显示的名称修改
+  model_name: "qwen/qwen3-vl-30b"  # Modify according to LM Studio display name
   temperature: 0.2
   max_tokens: 2000
   timeout: 60
 
-# 视频处理配置
+# Video processing configuration
 video:
-  input_dir: "E:\\Work_lyl\\concat_disagree"
-  output_dir: "E:\\Work_lyl\\concat_disagree"
+  input_dir: "E:/Work_lyl/concat_disagree"
+  output_dir: "E:/Work_lyl/concat_disagree"
   video_extensions: [".mp4", ".avi", ".mov", ".mkv"]
   frame_position: "middle"
   frame_count: 1
 ```
 
-## 使用方法
+## Usage
 
-### 运行测试
+### Run Tests
 
 ```bash
 python test_program.py
 ```
 
-### 运行批量评判
+### Run Batch Evaluation
 
 ```bash
-# 使用默认配置
+# Use default configuration
 python src/main.py
 
-# 指定输入目录
-python src/main.py --input "D:\\path\\to\\videos"
+# Specify input directory
+python src/main.py --input "D:/path/to/videos"
 
-# 指定配置文件
+# Specify configuration file
 python src/main.py --config "config/custom_config.yaml"
 ```
 
-## 输出目录结构
+## Output Directory Structure
 
-程序运行后会在输出目录下创建以下结构：
+After running the program, the following structure will be created in the output directory:
 
 ```
-E:\Work_lyl\concat_disagree\
-├── edit1\              # 高置信度判定为edit_1更好
-├── edit2\              # 高置信度判定为edit_2更好
-├── 平局\               # 高置信度判定为平局
-├── _待人工复核\         # 低置信度样本，需要人工复核
-└── _判断日志\
-    ├── results.csv     # 判断结果CSV
-    ├── *.json          # 详细判断结果
-    └── report_*.txt    # 处理报告
+E:/Work_lyl/concat_disagree/
+├── edit1/              # High confidence: edit_1 is better
+├── edit2/              # High confidence: edit_2 is better
+├── draw/               # High confidence: draw (tie)
+├── _manual_review/     # Low confidence samples, need manual review
+└── _judgment_logs/
+    ├── results.csv     # Judgment results CSV
+    ├── *.json          # Detailed judgment results
+    └── report_*.txt    # Processing reports
 ```
 
-## 工作流程
+## Workflow
 
-1. **抽帧**：从视频中抽取代表性帧（默认中间时间点）
-2. **第一次判断**：将原始图像输入VLM模型进行评判
-3. **位置交换**：交换edit_1和edit_2的位置
-4. **第二次判断**：将交换后的图像输入模型进行评判
-5. **一致性检查**：比较两次判断结果是否一致
-6. **分类归档**：
-   - 高置信度（一致）：自动归档到对应目录
-   - 低置信度（不一致）：放入待人工复核目录
-7. **日志记录**：保存判断过程和结果
+1. **Frame Extraction**: Extract representative frames from video (default: middle time point)
+2. **First Judgment**: Input original image to VLM model for evaluation
+3. **Position Swap**: Swap the positions of edit_1 and edit_2
+4. **Second Judgment**: Input swapped image to model for evaluation
+5. **Consistency Check**: Compare if two judgment results are consistent
+6. **Classification & Archival**:
+   - High confidence (consistent): Automatically archive to corresponding directory
+   - Low confidence (inconsistent): Place in manual review directory
+7. **Logging**: Save judgment process and results
 
-## 注意事项
+## Notes
 
-1. **LM Studio服务**：程序运行时需要LM Studio服务处于运行状态
-2. **模型选择**：推荐使用 `qwen3-vl-30b`，对细微差异判断更准确
-3. **视频格式**：支持MP4、AVI、MOV、MKV格式
-4. **位置交换**：默认使用物理交换（图像处理），也可配置为仅交换标签
-5. **人工复核**：低置信度样本需要人工复核，可配合AHK脚本使用
+1. **LM Studio Service**: LM Studio service must be running when the program executes
+2. **Model Selection**: Recommended to use `qwen3-vl-30b` for more accurate judgment of subtle differences
+3. **Video Formats**: Supports MP4, AVI, MOV, MKV formats
+4. **Position Swapping**: Default uses physical swapping (image processing), can also be configured to only swap labels
+5. **Manual Review**: Low confidence samples require manual review, can be used with AHK scripts
 
-## 故障排除
+## Troubleshooting
 
-### 无法连接LM Studio
+### Cannot Connect to LM Studio
 
-- 检查LM Studio是否已启动本地服务
-- 确认API地址和端口是否正确（默认http://localhost:1234）
-- 检查防火墙设置
+- Check if LM Studio local service is started
+- Confirm API address and port are correct (default: http://localhost:1234)
+- Check firewall settings
 
-### 模型响应格式错误
+### Model Response Format Error
 
-- 检查模型是否支持视觉输入
-- 确认模型名称是否与LM Studio中显示的一致
-- 尝试降低temperature参数
+- Check if the model supports visual input
+- Confirm model name matches the one displayed in LM Studio
+- Try lowering the temperature parameter
 
-### 视频抽帧失败
+### Video Frame Extraction Failed
 
-- 检查视频文件是否损坏
-- 确认视频格式是否支持
-- 检查文件权限
+- Check if video file is corrupted
+- Confirm video format is supported
+- Check file permissions
 
-## 技术细节
+## Technical Details
 
-- **抽帧策略**：支持单帧或多帧（首中尾），默认抽中间帧
-- **位置交换**：支持物理交换（图像处理）和标签交换（prompt修改）
-- **置信度判断**：基于两次判断的一致性，而非模型自评
-- **结果解析**：使用正则表达式提取结构化结论
+- **Frame Extraction Strategy**: Supports single frame or multiple frames (start/middle/end), default is middle frame
+- **Position Swapping**: Supports physical swapping (image processing) and label swapping (prompt modification)
+- **Confidence Judgment**: Based on consistency of two judgments, not model self-evaluation
+- **Result Parsing**: Uses regular expressions to extract structured conclusions
 
-## 许可证
+## License
 
-本项目仅用于内部使用。
+This project is for internal use only.
