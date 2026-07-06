@@ -1,0 +1,12 @@
+# Python缓存
+__pycache__/
+*.pyc
+
+# 日志文件
+*.log
+
+# 常见其他建议忽略项
+.venv/
+venv/
+*.env
+.idea/

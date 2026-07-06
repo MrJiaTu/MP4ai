@@ -1,0 +1,61 @@
+# Video Editing Effect Batch Judgment Configuration File
+
+# LM Studio API Configuration
+model:
+  # LM Studio service address
+  api_url: "http://localhost:1234/v1/chat/completions"
+  # Model name (as displayed in LM Studio)
+  model_name: "qwen/qwen3-vl-30b"
+  # Temperature parameter (recommended 0.1-0.3 for judgment tasks)
+  temperature: 0.2
+  # Maximum token count
+  max_tokens: 12000
+  # Request timeout (seconds)
+  timeout: 60
+
+# Video Processing Configuration
+video:
+  # Input video directory
+  input_dir: "E:/Work_lyl/concat_disagree/part_0"
+  # Output directory
+  output_dir: "E:/Work_lyl/output"
+  # Video file extensions
+  video_extensions: [".mp4", ".avi", ".mov", ".mkv"]
+  # Frame position: "middle" for middle time point, or specific seconds
+  frame_position: "middle"
+  # Frame count: 1 for single frame, 3 for start/middle/end frames
+  frame_count: 3
+
+# Image Processing Configuration
+image:
+  # Swap method: "physical" (physical image swap) or "prompt" (only swap in prompt)
+  swap_method: "physical"
+  # Image quality (JPEG compression quality)
+  jpeg_quality: 95
+
+# Judgment Configuration
+judgment:
+  # Confidence method: "consistency" (consistency of two judgments)
+  confidence_method: "consistency"
+  # Result parsing regex pattern
+  result_pattern: "Conclusion: (edit_1|edit_2|draw)"
+
+# Output Directory Structure Configuration
+output_dirs:
+  # High confidence classification directories
+  edit1: "edit1"
+  edit2: "edit2"
+  draw: "draw"
+  # Low confidence directory
+  manual_review: "_manual_review"
+  # Log directory
+  logs: "_judgment_logs"
+
+# Logging Configuration
+logging:
+  # Log level
+  level: "INFO"
+  # Log file
+  log_file: "video_judgment.log"
+  # Results CSV file
+  results_csv: "results.csv"
